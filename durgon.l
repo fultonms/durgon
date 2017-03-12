@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include "tree.h"
+#include "y.tab.h"
 %}
 
 id    [a-zA-Z][a-zA-Z0-9]+
@@ -10,10 +12,6 @@ rnum  [0-9]+"."[0-9]+
 whitespace  [ \t]
 
 %%
-{id}        {fprintf(stderr, "[ID:%s]", yylval.sval = strdup(yytext)); return ID;}
-{inum}      {fprintf(stderr, "[INUM:%d]", yylval.ival = atoi(yytext)); return INUM;}
-{rnum}      {fprintf(stderr, "[RNUM:%f]", yylval.rval = atof(yytext)); return RNUM;}
-
 "program"   {fprintf(stderr, "PROGRAM"); return PROGRAM;}
 "var"       {fprintf(stderr, "VAR"); return VAR;}
 "array"     {fprintf(stderr, "ARRAY"); return ARRAY;}
@@ -37,6 +35,9 @@ whitespace  [ \t]
 "not"                      {fprintf(stderr, "NOT", yylval.sval = strdup(yytext)); return NOT;}
 ".."                       {fprintf(stderr, "DOTDOT", yylval.sval = strdup(yytext)); return DOTDOT;}
 
+{id}        {fprintf(stderr, "[ID:%s]", yylval.sval = strdup(yytext)); return ID;}
+{inum}      {fprintf(stderr, "[INUM:%d]", yylval.ival = atoi(yytext)); return INUM;}
+{rnum}      {fprintf(stderr, "[RNUM:%f]", yylval.rval = atof(yytext)); return RNUM;}
 {whitespace}   { ; }
 \n          { fprintf( stderr, "[EOL]" ); return yytext[0]; }
 .           { fprintf( stderr, "{%c}", yytext[0] ); return yytext[0]; }

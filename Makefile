@@ -1,5 +1,5 @@
-mycalc: y.tab.o lex.yy.o tree.o
-	gcc -g -o mycalc y.tab.o lex.yy.o tree.o -ll -ly
+durgon: y.tab.o lex.yy.o tree.o
+	gcc -g -o durgon y.tab.o lex.yy.o tree.o -ll -ly
 
 tree.o: tree.c tree.h
 	gcc -g -c tree.c
@@ -10,12 +10,12 @@ y.tab.o: y.tab.c
 lex.yy.o: lex.yy.c
 	gcc -g -c lex.yy.c
 
-y.tab.c: calc.y
-	yacc -dv calc.y
+y.tab.c: durgon.y
+	yacc -dv durgon.y
 
-lex.yy.c: calc.l
-	lex -l calc.l
+lex.yy.c: durgon.l
+	lex -l durgon.l
 
 clean:
-	rm -f *.o mycalc y.tab.c lex.yy.c
+	rm -f *.o durgon y.tab.c lex.yy.c
 
