@@ -24,14 +24,20 @@
 
 %token PROGRAM
 %token VAR
-%token ARRAY OF
+%token ARRAY 
+%token OF
 %token INTEGER
 %token REAL
 %token FUNCTION
 %token PROCEDURE
-%token BEGIN END
-%token IF THEN ELSE
-%token WHILE DO
+%token BBEGIN 
+%token END
+%token ASSIGNOP
+%token IF 
+%token THEN 
+%token ELSE
+%token WHILE 
+%token DO
 %token NOT
 %token DOTDOT
 
@@ -39,6 +45,8 @@
 %left MULOP
 
 %%
+start: program
+
 program:
    PROGRAM ID '(' identifier_list ')' ';'
    declarations
@@ -61,7 +69,7 @@ type: standard_type
 standard_type: INTEGER | REAL ;
 
 subprogram_declarations: subprogram_declarations subprogram_declaration ';'
-   | EMPTY
+   | 
    ;
 
 subprogram_declaration: subprogram_head declarations subprogram_declarations compound_statement ;
@@ -71,17 +79,17 @@ subprogram_head: FUNCTION ID arguments ':' standard_type ';'
    ;
 
 arguments: '(' parameter_list ')'
-   | EMPTY
+   | 
    ;
 
 parameter_list: identifier_list ':' type
    | parameter_list ';' identifier_list ':' type
    ;
 
-compound_statement: BEGIN optional_statements END ;
+compound_statement: BBEGIN optional_statements END ;
 
 optional_statements: statement_list
-   | EMPTY
+   | 
    ;
 
 statement_list: statement
@@ -130,7 +138,11 @@ factor: ID
    ;
 %%
 
-main()
+int main(int argc, char** argv)
+{
    yyparse();
-   fprintf(stderr, "ENDING");
+}
+
+void yyerror(char * s){
+   fprintf(stderr, "%s\n", s);
 }

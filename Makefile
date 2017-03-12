@@ -17,5 +17,4 @@ lex.yy.c: durgon.l
 	lex -l durgon.l
 
 clean:
-	rm -f *.o durgon y.tab.c lex.yy.c
-
+	rm -f *.o durgon y.tab.c lex.yy.c 

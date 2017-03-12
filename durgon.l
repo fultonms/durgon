@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 #include "tree.h"
 #include "y.tab.h"
@@ -19,10 +20,10 @@ whitespace  [ \t]
 "integer"   {fprintf(stderr, "INTEGER"); return INTEGER;}
 "real"      {fprintf(stderr, "REAL"); return REAL;}
 "function"  {fprintf(stderr, "FUNCTION"); return FUNCTION;}
-"procedure" {fprtinf(stderr, "PROCEDURE"); return PROCEDURE;}
-"begin"     {fprintf(stderr, "BEGIN"); return BEGIN;}
+"procedure" {fprintf(stderr, "PROCEDURE"); return PROCEDURE;}
+"begin"     {fprintf(stderr, "BBEGIN"); return BBEGIN;}
 "end"       {fprintf(stderr, "END"); return END;}
-":="        {fprintf(stderr "ASSIGNOP"); return ASSIGNOP;}
+":="        {fprintf(stderr, "ASSIGNOP"); return ASSIGNOP;}
 "if"        {fprintf(stderr, "IF"); return IF;}
 "then"      {fprintf(stderr, "THEN"); return THEN;}
 "else"      {fprintf(stderr, "ELSE"); return ELSE;}
@@ -32,8 +33,8 @@ whitespace  [ \t]
 "<"|">"|"<="|">="|"="|"<>" {fprintf(stderr, "[RELOP:%c]", yylval.opval = yytext[0]); return RELOP;}
 "+"|"-"|"or"               {fprintf(stderr, "[ADDOP:%c]", yylval.opval = yytext[0]); return ADDOP;}
 "*"|"/"|"and"              {fprintf(stderr, "[MULOP:%c]", yylval.opval = yytext[0]); return MULOP;}
-"not"                      {fprintf(stderr, "NOT", yylval.sval = strdup(yytext)); return NOT;}
-".."                       {fprintf(stderr, "DOTDOT", yylval.sval = strdup(yytext)); return DOTDOT;}
+"not"                      {fprintf(stderr, "NOT"); return NOT;}
+".."                       {fprintf(stderr, "DOTDOT"); return DOTDOT;}
 
 {id}        {fprintf(stderr, "[ID:%s]", yylval.sval = strdup(yytext)); return ID;}
 {inum}      {fprintf(stderr, "[INUM:%d]", yylval.ival = atoi(yytext)); return INUM;}
@@ -41,5 +42,4 @@ whitespace  [ \t]
 {whitespace}   { ; }
 \n          { fprintf( stderr, "[EOL]" ); return yytext[0]; }
 .           { fprintf( stderr, "{%c}", yytext[0] ); return yytext[0]; }
-
 %%
