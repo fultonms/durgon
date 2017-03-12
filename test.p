@@ -1,10 +1,8 @@
 program main( input, output );
-{ declarations }
    var i,j: integer;
    var x,y,z: real;
-   var arr: array[ -13 .. 17 ] of integer;
+   var arr: array[13 .. 17 ] of integer;
 
-(* subprogram declarations *)
    function foo( x: integer ; y: integer ; a,b,c: real ) : real;
       var y: integer;
       function moo( x: integer ) : integer;
@@ -26,7 +24,6 @@ program main( input, output );
    end;
 
 begin
-   (* body *)
    x := 13; 
    if ( (x >= y) and (z < 13) ) then 
       x := 17  

@@ -7,7 +7,7 @@
 #include "y.tab.h"
 %}
 
-id    [a-zA-Z][a-zA-Z0-9]+
+id    [a-zA-Z][a-zA-Z0-9]*
 inum  [0-9]+
 rnum  [0-9]+"."[0-9]+
 whitespace  [ \t]
@@ -40,6 +40,6 @@ whitespace  [ \t]
 {inum}      {fprintf(stderr, "[INUM:%d]", yylval.ival = atoi(yytext)); return INUM;}
 {rnum}      {fprintf(stderr, "[RNUM:%f]", yylval.rval = atof(yytext)); return RNUM;}
 {whitespace}   { ; }
-\n          { fprintf( stderr, "[EOL]" ); return yytext[0]; }
+\n          { fprintf( stderr, "[EOL]" );}
 .           { fprintf( stderr, "{%c}", yytext[0] ); return yytext[0]; }
 %%
