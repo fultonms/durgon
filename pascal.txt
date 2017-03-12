@@ -1,0 +1,178 @@
+/* Context-free grammar for a pseudo Pascal language 
+   grammar G = (Alphabet, Variables, Rules, StartSymbol)
+ */
+%{
+
+%}
+
+%union {
+	char *sval;
+}
+
+%token PROGRAM
+%token <sval> ID
+
+%%
+program: 
+	PROGRAM ID '(' identifier_list ')' ';' 
+	declarations 
+	subprogram_declarations 
+	compound_statement 
+	'.'
+	;
+
+identifier_list: ID 
+	| identifier_list ',' ID
+	;
+
+declarations: declarations VAR identifier_list ':' type ';' 
+	| /* empty */ 
+	;
+
+type -> standard_type 
+	| ARRAY '[' INUM DOTDOT INUM ']' OF standard_type
+
+standard_type -> INTEGER | REAL
+
+subprogram_declarations -> subprogram_declarations subprogram_declaration ';'
+	| EMPTY
+
+subprogram_declaration -> subprogram_head declarations subprogram_declarations compound_statement
+
+subprogram_head -> FUNCTION ID arguments ':' standard_type ';'
+	| PROCEDURE ID arguments ';'
+
+arguments -> '(' parameter_list ')'
+	| EMPTY
+
+parameter_list -> identifier_list ':' type
+	| parameter_list ';' identifier_list ':' type
+
+compound_statement -> BEGIN optional_statements END
+
+optional_statements -> statement_list
+	| EMPTY
+
+statement_list -> statement
+	| statement_list ';' statement
+
+statement -> variable ASSIGNOP expression
+	| procedure_statement
+	| compound_statement
+	| IF expression THEN statement ELSE statement
+	| WHILE expression DO statement
+
+variable -> ID
+	| ID '[' expression ']'
+
+procedure_statement -> ID
+	| ID '(' expression_list ')'
+
+expression_list -> expression
+	| expression_list ',' expression
+
+expression -> simple_expression
+	| simple_expression RELOP simple_expression
+
+simple_expression -> term
+	| ADDOP term
+	| simple_expression ADDOP term
+
+term -> factor
+	| term MULOP factor
+
+factor -> ID
+	| ID '(' expression_list ')'
+	| ID '[' expression ']'
+	| INUM
+	| RNUM
+	| '(' expression ')'
+	| NOT factor
+
+
+
+
+
+/* Regular expressions for the tokens (upper-case sequences)
+ */
+
+ID -> LETTER ( LETTER | DIGIT )*
+LETTER -> [a-zA-Z]
+DIGIT -> [0-9]
+
+INUM -> [0-9]+
+RNUM -> [0-9]+"."[0-9]+
+
+PROGRAM 	-> "program"
+VAR 		-> "var"
+ARRAY 		-> "array"
+OF 			-> "of"
+INTEGER 	-> "integer"
+REAL 		-> "real"
+FUNCTION	-> "function"
+PROCEDURE	-> "procedure"
+BEGIN		-> "begin"
+END			-> "end"
+ASSIGNOP	-> ":="
+IF			-> "if"
+THEN		-> "then"
+ELSE		-> "else"
+WHILE		-> "while"
+DO			-> "do"
+RELOP		-> "<" | ">" | "<=" | ">=" | "=" | "<>"
+ADDOP		-> "+" | "-" | "or"
+MULOP		-> "*" | "/" | "and"
+NOT			-> "not"
+DOTDOT		-> ".."
+
+
+---------------------------------------------------------------------------------------------------------
+Example: main.p
+
+program main( input, output );
+{ declarations }
+	var i,j: integer;
+	var x,y,z: real;
+	var arr: array[ -13 .. 17 ] of integer;
+
+(* subprogram declarations *)
+	function foo( x: integer ; y: integer ; a,b,c: real ) : real;
+		var y: integer;
+		function moo( x: integer ) : integer;
+			procedure boo;
+			begin
+				x := 13
+			end;
+		begin
+
+		end;
+	begin
+		y := 13.0;
+		foo := foo(y)
+	end;
+
+	procedure boo;
+		var x: real;
+	begin
+	end;
+
+begin
+	(* body *)
+	x := 13;
+	if ( (x >= y) and (z < 13) ) then 
+		x := 17 
+	else 
+		arr[0] := arr[1]
+end.
+
+
+
+
+
+
+
+
+
+
+
+
