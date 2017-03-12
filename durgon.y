@@ -110,16 +110,17 @@ simple_expression: term
    | ADDOP term
    | simple_expression ADDOP term ;
 
-term: factor
-   | term MULOP factor ;
+term : factor                  
+   | term MULOP factor         
+   ;
 
-factor: ID
-   | ID '(' expression_list ')'
-   | ID '[' expression ']'
-   | INUM
-   | RNUM
-   | '(' expression ')'
-   | NOT factor
+factor: ID                       {$$ = make_tree(NAME, NULL, NULL); $$->attribute.sval = $1; }
+   | ID '(' expression_list ')'  
+   | ID '[' expression ']'       
+   | INUM                        {$$ = make_tree(INUM, NULL, NULL); $$->attribute.ival = $1;}
+   | RNUM                        {$$ = make_tree(RNUM, NULL, NULL); $$->attribute.rval = $1;}
+   | '(' expression ')'          {$$ = $2;}
+   | NOT factor                  
    ;
 %%
 
