@@ -4,6 +4,8 @@
 #include<assert.h>
 #include"tree.h"
 #include"y.tab.h"
+
+extern int line;
 %}
 
 %union {
@@ -130,5 +132,5 @@ int main(int argc, char** argv)
 }
 
 void yyerror(char * s){
-   fprintf(stderr, "%s\n", s);
+   fprintf(stderr, "Error at line %d: %s\n", line, s);
 }

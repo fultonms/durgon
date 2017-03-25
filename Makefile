@@ -10,11 +10,11 @@ y.tab.o: y.tab.c
 lex.yy.o: lex.yy.c
 	gcc -g -c lex.yy.c
 
-y.tab.c: durgon.y
-	yacc -dv durgon.y
+y.tab.c: parser.y
+	yacc -dv parser.y
 
-lex.yy.c: durgon.l
-	lex -l durgon.l
+lex.yy.c: scanner.l
+	lex -l scanner.l
 
 clean:
 	rm -f *.o durgon y.tab.c lex.yy.c 

@@ -5,6 +5,8 @@
 #include <assert.h>
 #include "tree.h"
 #include "y.tab.h"
+
+int line = 1;
 %}
 
 id    [a-zA-Z][a-zA-Z0-9]*
@@ -42,6 +44,6 @@ comment \{\*.*\*\}
 {rnum}          {fprintf(stderr, "[RNUM:%f]", yylval.rval = atof(yytext)); return RNUM;}
 {whitespace}    { ; }
 {comment}       { ; }
-\n              { fprintf( stderr, "[EOL]" );}
+\n              { fprintf( stderr, "[EOL]" ); line++;}
 .               { fprintf( stderr, "{%c}", yytext[0] ); return yytext[0]; }
 %%
