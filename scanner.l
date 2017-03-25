@@ -11,6 +11,7 @@ id    [a-zA-Z][a-zA-Z0-9]*
 inum  [0-9]+
 rnum  [0-9]+"."[0-9]+
 whitespace  [ \t]
+comment \{\*.*\*\}
 
 %%
 "program"   {fprintf(stderr, "PROGRAM"); return PROGRAM;}
@@ -36,10 +37,11 @@ whitespace  [ \t]
 "not"                      {fprintf(stderr, "NOT"); return NOT;}
 ".."                       {fprintf(stderr, "DOTDOT"); return DOTDOT;}
 
-{id}        {fprintf(stderr, "[ID:%s]", yylval.sval = strdup(yytext)); return ID;}
-{inum}      {fprintf(stderr, "[INUM:%d]", yylval.ival = atoi(yytext)); return INUM;}
-{rnum}      {fprintf(stderr, "[RNUM:%f]", yylval.rval = atof(yytext)); return RNUM;}
-{whitespace}   { ; }
-\n          { fprintf( stderr, "[EOL]" );}
-.           { fprintf( stderr, "{%c}", yytext[0] ); return yytext[0]; }
+{id}            {fprintf(stderr, "[ID:%s]", yylval.sval = strdup(yytext)); return ID;}
+{inum}          {fprintf(stderr, "[INUM:%d]", yylval.ival = atoi(yytext)); return INUM;}
+{rnum}          {fprintf(stderr, "[RNUM:%f]", yylval.rval = atof(yytext)); return RNUM;}
+{whitespace}    { ; }
+{comment}       { ; }
+\n              { fprintf( stderr, "[EOL]" );}
+.               { fprintf( stderr, "{%c}", yytext[0] ); return yytext[0]; }
 %%

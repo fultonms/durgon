@@ -1,4 +1,5 @@
 program main( input, output );
+{* Comments and such *}
    var i,j: integer;
    var x,y,z: real;
    var arr: array[13 .. 17 ] of integer;
