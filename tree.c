@@ -5,15 +5,40 @@
 #include "y.tab.h"
 
 
-tree_t *make_tree( int type, tree_t *left, tree_t *right )
+tree_t* make_tree( int type, tree_t *left, tree_t *right )
 {
-	tree_t *ptr = (tree_t *)malloc(sizeof(tree_t));
+	tree_t *ptr = malloc(sizeof(tree_t));
 	assert( ptr != NULL );
 
 	ptr->type = type;
 	ptr->left = left;
 	ptr->right = right;
 
+	return ptr;
+}
+
+tree_t* make_inum(int i){
+	tree_t * ptr = make_tree(INUM, NULL, NULL);
+	ptr->attribute.ival = i;
+	return ptr;
+
+}
+
+tree_t* make_rnum(float r){
+	tree_t * ptr = make_tree(RNUM, NULL, NULL);
+	ptr->attribute.rval = r;
+	return ptr;
+}
+
+tree_t* make_name(char* s){
+	tree_t* ptr = make_tree(ID, NULL, NULL);
+	ptr->attribute.sval = s;
+	return ptr;
+}
+
+tree_t* make_op(int type, int attr, tree_t* left, tree_t* right){
+	tree_t* ptr = make_tree(type, left, right);
+	ptr->attribute.opval = attr;
 	return ptr;
 }
 

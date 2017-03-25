@@ -10,11 +10,11 @@ extern int line;
 
 %union {
    int ival;
-   double rval;
+   float rval;
    int opval;
    char* sval;
 
-   tree_t *tval;
+   tree_t* tval;
 }
 
 %token   <opval> RELOP
@@ -45,6 +45,11 @@ extern int line;
 
 %left ADDOP
 %left MULOP
+
+%type <tval> expression
+%type <tval> simple_expression
+%type <tval> term
+%type <tval> factor
 
 %%
 start: program ; 
@@ -103,25 +108,27 @@ procedure_statement: ID
    | ID '(' expression_list ')';
 
 expression_list: expression
-   | expression_list ',' expression ;
+   | expression_list ',' expression ; 
 
-expression: simple_expression
-   | simple_expression RELOP simple_expression ;
+expression: simple_expression       { $$ = $1; }
+   | simple_expression RELOP simple_expression     { $$ = make_op(RELOP, $2, $1, $3); }
+   ;
 
-simple_expression: term
-   | ADDOP term
-   | simple_expression ADDOP term ;
+simple_expression: term             { $$ = $1; }
+   | ADDOP term                     
+   | simple_expression ADDOP term  { $$ = make_op(ADDOP, $2, $1, $3); }
+   ;
 
-term : factor                  
-   | term MULOP factor         
+term : factor                       { $$ = $1; }     
+   | term MULOP factor              { $$ = make_op(MULOP, $2, $1, $3); }
    ;
 
 factor: ID                      
    | ID '(' expression_list ')'  
    | ID '[' expression ']'       
-   | INUM                        
-   | RNUM                       
-   | '(' expression ')'         
+   | INUM                           { $$ = make_inum($1); }         
+   | RNUM                           { $$ = make_rnum($1); }
+   | '(' expression ')'             { $$ = $2; }
    | NOT factor                  
    ;
 %%
