@@ -30,7 +30,7 @@ tree_t* make_rnum(float r){
 	return ptr;
 }
 
-tree_t* make_name(char* s){
+tree_t* make_id(char* s){
 	tree_t* ptr = make_tree(ID, NULL, NULL);
 	ptr->attribute.sval = s;
 	return ptr;
@@ -46,7 +46,7 @@ tree_t* make_op(int type, int attr, tree_t* left, tree_t* right){
 void print_tree( tree_t *t, int spaces )
 {
 	int i;
-
+   
 	if ( t == NULL )
 		return;
 
@@ -79,15 +79,3 @@ void print_tree( tree_t *t, int spaces )
 	print_tree( t->right, spaces+4 );
 
 }
-
-int eval_tree( tree_t *t )
-{
-}
-
-
-
-
-
-
-
-

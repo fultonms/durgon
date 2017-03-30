@@ -110,7 +110,7 @@ procedure_statement: ID
 expression_list: expression
    | expression_list ',' expression ; 
 
-expression: simple_expression       { $$ = $1; }
+expression: simple_expression       { $$ = $1; print_tree($1, 0);}
    | simple_expression RELOP simple_expression     { $$ = make_op(RELOP, $2, $1, $3); }
    ;
 
@@ -123,7 +123,7 @@ term : factor                       { $$ = $1; }
    | term MULOP factor              { $$ = make_op(MULOP, $2, $1, $3); }
    ;
 
-factor: ID                      
+factor: ID                          { $$ = make_id($1);} 
    | ID '(' expression_list ')'  
    | ID '[' expression ']'       
    | INUM                           { $$ = make_inum($1); }         
