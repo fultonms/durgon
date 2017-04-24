@@ -4,8 +4,15 @@
 #include<assert.h>
 #include"tree.h"
 #include"y.tab.h"
+#include "scope.h"
+#include "semmantic.h"
+#include "y.tab.h"
+#include "gencode.h"
 
 extern int line;
+
+FILE* outfile;
+
 %}
 
 %union {
@@ -54,12 +61,12 @@ extern int line;
 %%
 start: program ; 
 
-program:
+program: {genHead(); }
    PROGRAM ID '(' identifier_list ')' ';'
    declarations
    subprogram_declarations
    compound_statement
-   '.'
+   '.' {genTail($3);}
    ;
 
 identifier_list: ID
@@ -135,7 +142,13 @@ factor: ID                          { $$ = make_id($1);}
 
 int main(int argc, char** argv)
 {
-   yyparse();
+    outfile = fopen("paarthurnax.s", "w");
+
+    yyparse();
+
+    fclose(outfile);
+
+    return 0;
 }
 
 void yyerror(char * s){

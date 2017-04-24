@@ -1,5 +1,8 @@
-durgon: y.tab.o lex.yy.o tree.o
-	gcc -g -o durgon y.tab.o lex.yy.o tree.o -ll -ly
+durgon: y.tab.o lex.yy.o tree.o gencode.o
+	gcc -g -o durgon y.tab.o lex.yy.o tree.o gencode.o -ll -ly
+
+gencode.o: gencode.c gencode.h
+	gcc -g -c gencode.c
 
 tree.o: tree.c tree.h
 	gcc -g -c tree.c
