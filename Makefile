@@ -20,4 +20,4 @@ lex.yy.c: scanner.l
 	lex -l scanner.l
 
 clean:
-	rm -f *.o durgon y.tab.c lex.yy.c 
+	rm -f *.o durgon y.tab.c lex.yy.c y.tab.h y.output
