@@ -30,9 +30,9 @@ tree_t* make_rnum(float r){
 	return ptr;
 }
 
-tree_t* make_id(char* s){
+tree_t* make_id(node_t* n){
 	tree_t* ptr = make_tree(ID, NULL, NULL);
-	ptr->attribute.sval = s;
+	ptr->attribute.sval = n;
 	return ptr;
 }
 
@@ -56,7 +56,7 @@ void print_tree( tree_t *t, int spaces )
 
 	switch( t->type ) {
 	case ID:
-		fprintf( stderr, "[ID:%s]", t->attribute.sval );
+		fprintf( stderr, "[ID:%s]", t->attribute.sval->name );
 		break;
 	case INUM:
 		fprintf( stderr, "[INUM:%d]", t->attribute.ival );
@@ -69,12 +69,15 @@ void print_tree( tree_t *t, int spaces )
 	case MULOP:
 		fprintf( stderr, "[MULOP:%c]", t->attribute.opval );
 		break;
+	case ASSIGNOP:
+		fprintf( stderr, "[ASSIGNOP]");
+		break;
 	default:
-		fprintf( stderr, "[UKNOWN]" );
-		exit(1);
+		fprintf( stderr, "[UKNOWN:%d]", t->type );
+		//exit(1);
 	}
-	fprintf( stderr, "\n" );
 
+	fprintf( stderr, "\n" );
 	print_tree( t->left, spaces+4 );
 	print_tree( t->right, spaces+4 );
 

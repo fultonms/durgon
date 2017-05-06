@@ -1,6 +1,5 @@
 #ifndef SCOPE_H
 #define SCOPE_H
-
 #include "node.h"
 
 #define HASH_SIZE 211
@@ -17,7 +16,7 @@ typedef struct scope_s {
 node_t* scope_search(scope_t* scope, char* name);
 node_t* scope_insert(scope_t* scope, char* name);
 
-node_t* scope_seachall(scope_t* head, char* name);
+node_t* scope_searchall(scope_t* head, char* name);
 
 scope_t* make_scope();
 

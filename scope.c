@@ -3,7 +3,10 @@
 #include <stdio.h>
 #include "scope.h"
 
+scope_t* top;
+
 extern int offsetMode;
+int depth = 0;
 
 static int hashpjw(char* s){
     char* p;
@@ -35,7 +38,7 @@ node_t* scope_search(scope_t* scope, char* name){
 
 node_t* scope_insert(scope_t* scope, char* name){
     if( scope == NULL)
-        return NULL
+        return NULL;
 
     if( scope_search(scope, name)){
         fprintf(stderr, "Name %s already defined in scope.\n", name);
@@ -56,27 +59,73 @@ node_t* scope_insert(scope_t* scope, char* name){
     }
 
     scope->table[i] = node_push(head, name, offset);
-    return scope-table[i]
+    return scope->table[i];
 }
 
-node_t* scope_seachall(scope_t* head, char* name){
+node_t* scope_searchall(scope_t* scope, char* name){
+   node_t * ret;
 
+   if(scope == NULL)
+      return NULL;
+
+   while(scope != NULL){
+      ret = scope_search(scope, name);
+      
+      if(ret != NULL){
+         ret->depth = depth;
+         depth = 0;
+         return ret;
+      }
+      depth++;
+      scope = scope->next;
+   }
+
+   depth = 0;
+   fprintf(stderr, "Could not find %s\n", name);
+   assert(0);
+   return NULL;
 }
 
 scope_t* make_scope(){
-    scope_t* s = calloc(i, sizeof(scope_t));
-    s->off_arg = 0;
+    scope_t* s = calloc(1, sizeof(scope_t));
+    //s->off_arg = 0;
     return s;
 }
 
 //Stack functions
 scope_t* scope_push(scope_t* top, int type){
     scope_t* s = make_scope();
-    s->top = top;
+    s->next = top;
     s->type = type;
     return s;
 }
 
-scope_t* scope_pop(scope_t* head){
+static void list_free(node_t* n){
+    node_t* temp = NULL;
 
+    if( n == NULL)
+        return;
+
+    temp = n->next;
+    node_free(n);
+    list_free(temp);
+}
+
+static void scope_free(scope_t* scope){
+    for(int i=0; i < HASH_SIZE; i++){
+        list_free(scope->table[i]);
+    }
+
+    free(scope);
+}
+
+scope_t* scope_pop(scope_t* head){
+    scope_t* temp;
+    
+    if(head == NULL)
+        return NULL;
+    
+    temp = head->next;
+    scope_free(head);
+    return temp;
 }

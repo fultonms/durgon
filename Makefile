@@ -1,8 +1,14 @@
-durgon: y.tab.o lex.yy.o tree.o gencode.o
-	gcc -g -o durgon y.tab.o lex.yy.o tree.o gencode.o -ll -ly
+durgon: y.tab.o lex.yy.o tree.o scope.o node.o gencode.o
+	gcc -g -o durgon y.tab.o lex.yy.o tree.o scope.o node.o gencode.o -ll -ly
 
 gencode.o: gencode.c gencode.h
 	gcc -g -c gencode.c
+
+scope.o: scope.c scope.h
+	gcc -g -c scope.c
+
+node.o: node.c node.h
+	gcc -g -c node.c
 
 tree.o: tree.c tree.h
 	gcc -g -c tree.c
