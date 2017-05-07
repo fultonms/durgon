@@ -22,8 +22,10 @@ tree_t* make_rnum(float r);
 tree_t* make_id(node_t* n);
 tree_t* make_op(int type, int attr, tree_t* left, tree_t* right);
 
-void print_tree( tree_t *t, int spaces );
-int eval_tree( tree_t *t );
+void print_tree( tree_t *t);
+void print_spaced_branch(tree_t* t, int spaces);
+
+void tree_recycle(tree_t* t);
 
 #endif
 

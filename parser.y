@@ -67,12 +67,12 @@ FILE* outfile;
 %%
 start: program ; 
 
-program: {genHead(); top = scope_push(top, PROCEDURE);}
+program: {gen_head(); top = scope_push(top, PROCEDURE);}
    PROGRAM ID '(' identifier_list ')' ';'
    declarations
-   subprogram_declarations
-   compound_statement
-   '.' {genTail($3);}
+   subprogram_declarations {gen_func_head($3);}
+   compound_statement {gen_func_tail();}
+   '.' {gen_tail($3); top = scope_pop(top);}
    ;
 
 identifier_list: ID         {$$ = make_tree(COMMA, NULL, make_id(scope_insert(top, $1)));}
@@ -113,9 +113,10 @@ statement: variable ASSIGNOP expression
             {
                 tree_t* t;
                 t = make_tree(ASSIGNOP, make_id(scope_searchall(top, $1)), $3);
-                fprintf(stderr, "------------------BEGIN_TREE------------------\n");
-                print_tree(t, 0);
-                fprintf(stderr, "------------------END_TREE------------------\n"); 
+                print_tree(t); 
+                assert(check_tree(t));
+                gencode(t);
+                tree_recycle(t);
             }
    | procedure_statement
    | compound_statement
@@ -161,9 +162,7 @@ factor: ID                          { $$ = make_id(scope_searchall(top,$1));}
 int main(int argc, char** argv)
 {
     outfile = fopen("paarthurnax.s", "w");
-
     yyparse();
-
     fclose(outfile);
 
     return 0;

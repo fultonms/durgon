@@ -42,8 +42,13 @@ tree_t* make_op(int type, int attr, tree_t* left, tree_t* right){
 	return ptr;
 }
 
+void print_tree(tree_t* t){
+	fprintf(stderr, "------------------BEGIN_TREE------------------\n");
+	print_spaced_branch(t, 0);
+	fprintf(stderr, "------------------END_TREE------------------\n\n");
+}
 
-void print_tree( tree_t *t, int spaces )
+void print_spaced_branch( tree_t *t, int spaces )
 {
 	int i;
    
@@ -78,7 +83,10 @@ void print_tree( tree_t *t, int spaces )
 	}
 
 	fprintf( stderr, "\n" );
-	print_tree( t->left, spaces+4 );
-	print_tree( t->right, spaces+4 );
+	print_spaced_branch( t->left, spaces+4 );
+	print_spaced_branch( t->right, spaces+4 );
+}
+
+void tree_recycle(tree_t* t){
 
 }
