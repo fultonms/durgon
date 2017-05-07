@@ -87,6 +87,33 @@ void print_spaced_branch( tree_t *t, int spaces )
 	print_spaced_branch( t->right, spaces+4 );
 }
 
+int label_tree(tree_t* t){
+	assert(t != NULL );
+	
+	if(t->left == NULL && t->right == NULL)
+		return 0;
+	
+	if(t->left && !t->left->left && !t->left->right){
+		t->left->label = 1;
+	}
+	if(t->right && !t->right->left && !t->right->right){
+		t->right->label = 0;
+	}
+
+	label_tree(t->left);
+	label_tree(t->right);
+
+	if(t->left->label == t->right->label){
+		t->label = t->left->label + 1;
+	}else{
+		if(t->left->label < t->right->label)
+			t->label = t->right->label;
+		else
+			t->label = t->left->label;
+	}
+	return 0;
+}
+
 void tree_recycle(tree_t* t){
 
 }

@@ -11,6 +11,7 @@ typedef struct tree_s {
 		int opval;	/* ADDOP, MULOP, RELOP*/
       
 	} attribute;
+	int label;
 	struct tree_s *left, *right;
 } 
 tree_t;
@@ -21,6 +22,8 @@ tree_t* make_inum(int i);
 tree_t* make_rnum(float r);
 tree_t* make_id(node_t* n);
 tree_t* make_op(int type, int attr, tree_t* left, tree_t* right);
+
+int label_tree(tree_t* t);
 
 void print_tree( tree_t *t);
 void print_spaced_branch(tree_t* t, int spaces);

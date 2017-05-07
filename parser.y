@@ -129,7 +129,19 @@ variable: ID { $$ = $1; }
    ;
 
 procedure_statement: ID
-   | ID '(' expression_list ')' { tree_t* t = make_tree(PROCEDURE_CALL, make_id(scope_searchall(top, $1)), $3);}
+   | ID '(' expression_list ')' 
+        {
+            if( $1 == "read"){
+                gen_read($3);
+            }else if($1 == "write"){
+                gen_write($3);
+            }else{
+                tree_t* t = make_tree(PROCEDURE_CALL, make_id(scope_searchall(top, $1)), $3);
+                assert(check_tree(t));
+                gencode(t);
+                tree_recycle(t);
+            }
+        }
    ;
 
 expression_list: expression           { $$ = make_tree(COMMA, NULL, $1);}
