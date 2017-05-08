@@ -13,7 +13,7 @@ id    [a-zA-Z][a-zA-Z0-9]*
 inum  [0-9]+
 rnum  [0-9]+"."[0-9]+
 whitespace  [ \t]
-comment \{\*.*\*\}
+comment \(\*.*\*\)
 
 %%
 "program"   {fprintf(stderr, "PROGRAM\n"); return PROGRAM;}
@@ -32,6 +32,8 @@ comment \{\*.*\*\}
 "else"      {fprintf(stderr, "ELSE\n"); return ELSE;}
 "while"     {fprintf(stderr, "WHILE\n"); return WHILE;}
 "do"        {fprintf(stderr, "DO\n"); return DO;}
+"for"       {fprintf(stderr, "FOR\n"); return FOR;}
+"to"        {fprintf(stderr, "TO\n"); return TO;}
 
 "<"|">"|"<="|">="|"="|"<>" {fprintf(stderr, "[RELOP:%c]\n", yylval.opval = yytext[0]); return RELOP;}
 "+"|"-"|"or"               {fprintf(stderr, "[ADDOP:%c]\n", yylval.opval = yytext[0]); return ADDOP;}

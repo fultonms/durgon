@@ -74,8 +74,32 @@ void print_spaced_branch( tree_t *t, int spaces )
 	case MULOP:
 		fprintf( stderr, "[MULOP:%c]", t->attribute.opval );
 		break;
+	case RELOP:
+		fprintf( stderr, "[RELOP:%c]", t->attribute.opval);
+		break;
 	case ASSIGNOP:
 		fprintf( stderr, "[ASSIGNOP]");
+		break;
+	case IF:
+		fprintf( stderr, "[IF]");
+		break;
+	case THEN:
+		fprintf( stderr, "[THEN]");
+		break;
+	case ELSE:
+		fprintf( stderr, "[ELSE]");
+		break;		
+	case WHILE:
+		fprintf( stderr, "[WHILE]");
+		break;
+	case DO:
+		fprintf( stderr, "[DO]");
+		break;
+	case FOR:
+		fprintf( stderr, "[FOR]");
+		break;
+	case TO:
+		fprintf( stderr, "[TO]");
 		break;
 	default:
 		fprintf( stderr, "[UKNOWN:%d]", t->type );

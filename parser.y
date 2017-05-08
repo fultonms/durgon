@@ -48,6 +48,7 @@ FILE* outfile;
 %token BBEGIN END
 %token IF THEN ELSE
 %token WHILE DO
+%token FOR TO
 
 %token FUNCTION_CALL
 %token PROCEDURE_CALL
@@ -57,20 +58,24 @@ FILE* outfile;
 %left ADDOP
 %left MULOP
 
-%type <tval> expression_list
 %type <tval> expression
+%type <tval> expression_list
+%type <tval> identifier_list
+%type <tval> declarations
 %type <tval> simple_expression
+%type <tval> statement
+%type <ival> standard_type
+%type <ival> type
 %type <tval> term
 %type <tval> factor
 %type <sval> variable
-%type <tval> identifier_list
 
 %%
 start: program ; 
 
 program: {gen_head(); top = scope_push(top, PROCEDURE);}
-   PROGRAM ID '(' identifier_list ')' ';'
-   declarations
+   PROGRAM ID '(' identifier_list ')' ';' {offsetMode = -1;}
+   declarations {offsetMode = 0;}
    subprogram_declarations {gen_func_head($3);}
    compound_statement {gen_func_tail();}
    '.' {gen_tail($3); top = scope_pop(top);}
@@ -81,23 +86,47 @@ identifier_list: ID         {$$ = make_tree(COMMA, NULL, make_id(scope_insert(to
    ; 
 
 declarations: declarations VAR identifier_list ':' type ';'
-   | /* empty */ ;
+   | /* empty */ {$$ = NULL;} 
+   ;
 
-type: standard_type
-   | ARRAY '[' INUM DOTDOT INUM ']' OF standard_type ;
+type: standard_type { $$ = $1;}
+   //| ARRAY '[' INUM DOTDOT INUM ']' OF standard_type 
+   ;
 
-standard_type: INTEGER | REAL ;
+standard_type: INTEGER {$$ = INUM;} 
+    | REAL 
+    ;
 
 subprogram_declarations: subprogram_declarations subprogram_declaration ';'
    | ;
 
-subprogram_declaration: subprogram_head declarations subprogram_declarations compound_statement ;
+subprogram_declaration: 
+    subprogram_head {offsetMode = -1;} 
+    declarations {offsetMode = 0;}
+    subprogram_declarations {top = scope_pop(top);}
+    compound_statement 
+    ;
 
-subprogram_head: FUNCTION ID arguments ':' standard_type ';'
-   | PROCEDURE ID arguments ';';
+subprogram_head: 
+    FUNCTION ID
+        {   scope_insert(top, $2);
+            scope_push(top, FUNCTION);
+        }
+    arguments ':' standard_type ';'
+        {
+            node_t* n;
+            n = scope_search(top->next, $2);
 
-arguments: '(' parameter_list ')'
-   | ;
+        }
+    | PROCEDURE ID
+        {   scope_insert(top, $2);
+            scope_push(top, PROCEDURE);
+        } 
+    arguments ';';
+
+arguments:                  {offsetMode = 1;} 
+    '(' parameter_list ')'  {offsetMode = 0;}
+    | ;
 
 parameter_list: identifier_list ':' type
    | parameter_list ';' identifier_list ':' type;
@@ -116,14 +145,34 @@ statement: variable ASSIGNOP expression
                 t = make_tree(ASSIGNOP, make_id(scope_searchall(top, $1)), $3);
                 print_tree(t); 
                 assert(check_tree(t));
-                gencode(t);
-                tree_recycle(t);
+                //gencode(t);
+                $$ = t;
+                //tree_recycle(t);
+                
             }
    | procedure_statement
    | compound_statement
    | IF expression THEN statement ELSE statement
-   | WHILE expression DO statement ;
-   //FOR LOOP TO_DO 
+   {
+       tree_t* t = NULL;
+       t = make_tree(IF, $2, make_tree(THEN, $4, make_tree(ELSE, $6, NULL)));
+       print_tree(t);
+   }
+   | WHILE expression DO statement
+   {
+       tree_t* t = NULL;
+       t = make_tree(WHILE, $2, make_tree(DO, $4, NULL));
+       print_tree(t);
+   }
+
+   | FOR variable ASSIGNOP expression TO expression DO statement
+   {
+       tree_t* t = NULL;
+       t = make_tree(FOR, make_tree(ASSIGNOP, make_id(scope_searchall(top, $2)), $4), make_tree(TO, $6, make_tree(DO, $8, NULL)));
+       print_tree(t);
+   }
+   ;
+   
 
 variable: ID { $$ = $1; }
    //| ID '[' expression ']'
@@ -139,7 +188,7 @@ procedure_statement: ID
             }else{
                 tree_t* t = make_tree(PROCEDURE_CALL, make_id(scope_searchall(top, $1)), $3);
                 assert(check_tree(t));
-                gencode(t);
+                //gencode(t);
                 tree_recycle(t);
             }
         }
