@@ -8,6 +8,7 @@ scope_t* top;
 extern int offsetMode;
 int depth = 0;
 
+//Magical hashing.
 static int hashpjw(char* s){
     char* p;
     unsigned h = 0, g;
@@ -23,6 +24,7 @@ static int hashpjw(char* s){
     return h % HASH_SIZE;
 }
 
+//Checks to see if a name exists in the passed scope, returns it if so.
 node_t* scope_search(scope_t* scope, char* name){
     if( scope == NULL) 
         return NULL;
@@ -36,6 +38,7 @@ node_t* scope_search(scope_t* scope, char* name){
     return node_search(head, name);
 }
 
+//Inserts a name into a scope, returning an error, if the name already exists.
 node_t* scope_insert(scope_t* scope, char* name){
     if( scope == NULL)
         return NULL;
@@ -47,29 +50,19 @@ node_t* scope_insert(scope_t* scope, char* name){
 
     int i;
     node_t* head;
-    int offset;
+    int offset ;
 
     i = hashpjw(name);
     head = scope->table[i];
 
-    switch(offsetMode){
-        case -1:
-            scope->off_loc -= 8;
-            offset = scope->off_loc;
-            break; 
-        case 0 : 
-            offset = 0; 
-            break;
-        case 1 : 
-            scope->off_arg += 8 ;
-            offset = scope->off_arg;
-            break;
-    }
+    //Need to set offset properlly.
+    offset = 0;
 
     scope->table[i] = node_push(head, name, offset);
     return scope->table[i];
 }
 
+//Checks all scopes down from the current scope to see if the name exists.
 node_t* scope_searchall(scope_t* scope, char* name){
    node_t * ret;
 
@@ -94,6 +87,7 @@ node_t* scope_searchall(scope_t* scope, char* name){
    return NULL;
 }
 
+//Creates a new scope.
 scope_t* make_scope(){
     scope_t* s = calloc(1, sizeof(scope_t));
     s->off_arg = 8;
@@ -108,6 +102,7 @@ scope_t* scope_push(scope_t* top, int type){
     return s;
 }
 
+//Frees the memory of the list in each scope.
 static void list_free(node_t* n){
     node_t* temp = NULL;
 
@@ -119,6 +114,7 @@ static void list_free(node_t* n){
     list_free(temp);
 }
 
+//Frees the memory of a scope.
 static void scope_free(scope_t* scope){
     for(int i=0; i < HASH_SIZE; i++){
         list_free(scope->table[i]);
@@ -127,6 +123,7 @@ static void scope_free(scope_t* scope){
     free(scope);
 }
 
+// Pops a scope off the stack.
 scope_t* scope_pop(scope_t* head){
     scope_t* temp;
     

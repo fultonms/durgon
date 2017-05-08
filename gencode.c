@@ -38,6 +38,7 @@ static void out_id(char * fmt, tree_t* t, char * option){
 
 }
 
+//The warpper for the whole assembly file.
 int gen_head(){
     out(".LC0:\n");
     out("\t.string \"%%ld\\n\"\n");
@@ -48,6 +49,7 @@ int gen_head(){
     return 0;
 }
 
+//The closed wrapper for the whole assembly file.
 int gen_tail(char* name){
     out("paarthunax:\n");
 	out("\tpushq\t%%rbp\n");
@@ -58,6 +60,7 @@ int gen_tail(char* name){
     return 0;
 }
 
+//Wrapper for a function.
 int gen_func_head(char * name){
     out("%s:\n", name);
     out("\tpushq\t%%rbp\n");
@@ -66,6 +69,7 @@ int gen_func_head(char * name){
     return 0;
 }
 
+//Close of wrapper for a function.
 int gen_func_tail(){
     out("\tleave\n");
     out("\tret\n");
@@ -73,6 +77,7 @@ int gen_func_tail(){
     return 0;
 }
 
+//Generates a call to printf to cover writes.
 int gen_write(tree_t* t){
     if(t == NULL)
         return 1;
@@ -107,6 +112,7 @@ int gen_write(tree_t* t){
     return 0;
 }
 
+//Generates a call to scanf to cover read.
 int gen_read(tree_t* t){
     if(t == NULL)
         return 1;
@@ -114,6 +120,7 @@ int gen_read(tree_t* t){
     return 0;
 }
 
+//Generates an addop instruction from the op, and the two registers.
 static int gen_addop(tree_t* t, reg_t* l, reg_t* r){
 
     if( l == NULL){
@@ -142,10 +149,12 @@ static int gen_addop(tree_t* t, reg_t* l, reg_t* r){
     return 0;
 }
 
+//Generates a MULOP instruction from the tree and the two registers passed.
 static int gen_mulop(tree_t* t, reg_t* l, reg_t* r){
     return 0;
 }
 
+//Generates the proper instruction for any operation.
 static int gen_op(tree_t* t, reg_t* l, reg_t* r){
     switch(t->type){
         case ADDOP: gen_addop(t, l, r); break;
@@ -155,6 +164,7 @@ static int gen_op(tree_t* t, reg_t* l, reg_t* r){
     return 0;
 }
 
+//Figures out which case you are in for gencode.
 static int gencase(tree_t* t){
     if( t->type == INUM)
         return 0;
@@ -170,6 +180,7 @@ static int gencase(tree_t* t){
         return 5;
 }
 
+//Classic gencode algorithim, should cover most expressions.
 static int gencode_statement(tree_t* t){
     reg_t* r;
  
@@ -216,6 +227,8 @@ static int gencode_statement(tree_t* t){
     return 0;
 }
 
+//Covers all non-expression gencode eventually.
+//Thats ASSIGNOP, IF, WHILE, FOR, etc.
 int gencode(tree_t* t){
     if(t == NULL)
         return 0;

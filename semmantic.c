@@ -4,6 +4,7 @@
 #include "semmantic.h"
 #include "y.tab.h"
 
+//Gets the type of a tree.
 static int get_type(tree_t* t){
     if (t->type == INUM){
         return INUM;
@@ -14,6 +15,7 @@ static int get_type(tree_t* t){
     return 0;
 }
 
+//Ensures that addops are only between equal types.
 int check_addop(tree_t* t){
     int l, r;
 
@@ -36,6 +38,8 @@ int check_asnop(tree_t* t){
 
 }
 
+//Runs all semmantic checks that can be done by just looking at the tree.
+//Scoping semmantic checks should be getting caught in symbol table calls.
 int check_tree(tree_t* t){
     if( t == NULL)
         return -1;

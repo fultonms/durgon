@@ -7,7 +7,7 @@
 
 typedef struct scope_s {
     node_t* table[HASH_SIZE];
-    int off_arg;
+    int off_arg; 
     int off_loc;
     int type;
     struct scope_s* next;

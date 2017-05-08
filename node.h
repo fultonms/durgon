@@ -1,17 +1,24 @@
 #ifndef NODE_H
 #define NODE_H
 
+//Stores type information for arguments.
 typedef struct typen_s{
     int type;
     struct typen_s* next;
 } typen_t;
 
+//Stores function information, including the number of arguments, return value, and
+//a list of all arguments that the function takes.
 typedef struct {
     int argc;
     int ret;
     typen_t* types;
 } func_t;
 
+//The node backing the linked list of the hash table.__a
+//contains name and type of the object, function info if 
+//nessecary, ofset and depth information, and a pointer to 
+//the next thing that hashed to that.
 typedef struct node_s{
     char* name;
     int type;
