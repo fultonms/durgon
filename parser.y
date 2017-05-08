@@ -74,11 +74,11 @@ FILE* outfile;
 start: program ; 
 
 program: {gen_head(); top = scope_push(top, PROCEDURE);}
-   PROGRAM ID '(' identifier_list ')' ';' {offsetMode = -1;}
-   declarations {offsetMode = 0;}
-   subprogram_declarations {gen_func_head($3);}
+   PROGRAM ID '(' identifier_list ')' ';' 
+   declarations 
+   subprogram_declarations {gen_func_head($3);} 
    compound_statement {gen_func_tail();}
-   '.' {gen_tail($3); top = scope_pop(top);}
+   '.' { {gen_tail($3); top = scope_pop(top);}}
    ;
 
 identifier_list: ID         {$$ = make_tree(COMMA, NULL, make_id(scope_insert(top, $1)));}
@@ -101,31 +101,20 @@ subprogram_declarations: subprogram_declarations subprogram_declaration ';'
    | ;
 
 subprogram_declaration: 
-    subprogram_head {offsetMode = -1;} 
-    declarations {offsetMode = 0;}
-    subprogram_declarations {top = scope_pop(top);}
+    subprogram_head 
+    declarations 
+    subprogram_declarations
     compound_statement 
     ;
 
 subprogram_head: 
     FUNCTION ID
-        {   scope_insert(top, $2);
-            scope_push(top, FUNCTION);
-        }
     arguments ':' standard_type ';'
-        {
-            node_t* n;
-            n = scope_search(top->next, $2);
-
-        }
     | PROCEDURE ID
-        {   scope_insert(top, $2);
-            scope_push(top, PROCEDURE);
-        } 
     arguments ';';
 
-arguments:                  {offsetMode = 1;} 
-    '(' parameter_list ')'  {offsetMode = 0;}
+arguments:                 
+    '(' parameter_list ')'  
     | ;
 
 parameter_list: identifier_list ':' type
