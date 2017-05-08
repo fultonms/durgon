@@ -53,9 +53,17 @@ node_t* scope_insert(scope_t* scope, char* name){
     head = scope->table[i];
 
     switch(offsetMode){
-        case -1: offset = 0;
-        case 0 : offset = 0;
-        case 1 : offset = 0;
+        case -1:
+            scope->off_loc -= 8;
+            offset = scope->off_loc;
+            break; 
+        case 0 : 
+            offset = 0; 
+            break;
+        case 1 : 
+            scope->off_arg += 8 ;
+            offset = scope->off_arg;
+            break;
     }
 
     scope->table[i] = node_push(head, name, offset);
@@ -88,7 +96,7 @@ node_t* scope_searchall(scope_t* scope, char* name){
 
 scope_t* make_scope(){
     scope_t* s = calloc(1, sizeof(scope_t));
-    //s->off_arg = 0;
+    s->off_arg = 8;
     return s;
 }
 

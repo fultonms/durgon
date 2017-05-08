@@ -2,6 +2,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<assert.h>
+#include<string.h>
 #include "tree.h"
 #include "scope.h"
 #include "semmantic.h"
@@ -131,9 +132,9 @@ variable: ID { $$ = $1; }
 procedure_statement: ID
    | ID '(' expression_list ')' 
         {
-            if( $1 == "read"){
+            if(strcmp("read", $1) == 0){
                 gen_read($3);
-            }else if($1 == "write"){
+            }else if(strcmp("write", $1) == 0){
                 gen_write($3);
             }else{
                 tree_t* t = make_tree(PROCEDURE_CALL, make_id(scope_searchall(top, $1)), $3);
