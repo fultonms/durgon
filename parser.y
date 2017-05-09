@@ -94,7 +94,7 @@ type: standard_type { $$ = $1;}
    ;
 
 standard_type: INTEGER {$$ = INUM;} 
-    | REAL 
+    | REAL {$$ = INUM; }
     ;
 
 subprogram_declarations: subprogram_declarations subprogram_declaration ';'
@@ -192,7 +192,7 @@ expression: simple_expression       { $$ = $1;}
    ;
 
 simple_expression: term             { $$ = $1; }
-   | ADDOP term                     
+   //| ADDOP term                     
    | simple_expression ADDOP term   { $$ = make_op(ADDOP, $2, $1, $3); }
    ;
 

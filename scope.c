@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include "scope.h"
 
+#define RED "\x1B[31m"
+#define error(fmt, ...) printf("\x1B[31m%s:%d: " fmt "\x1B[0m\n", __FILE__, __LINE__, __VA_ARGS__)
+
 scope_t* top;
 
 extern int offsetMode;
@@ -44,7 +47,7 @@ node_t* scope_insert(scope_t* scope, char* name){
         return NULL;
 
     if( scope_search(scope, name)){
-        fprintf(stderr, "Name %s already defined in scope.\n", name);
+        error("Name %s already defined in scope.", name);
         assert(0);
     }
 
