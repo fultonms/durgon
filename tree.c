@@ -4,6 +4,7 @@
 #include "tree.h"
 #include "y.tab.h"
 
+extern int _yacout;
 
 tree_t* make_tree( int type, tree_t *left, tree_t *right )
 {
@@ -43,9 +44,11 @@ tree_t* make_op(int type, int attr, tree_t* left, tree_t* right){
 }
 
 void print_tree(tree_t* t){
-	fprintf(stderr, "------------------BEGIN_TREE------------------\n");
-	print_spaced_branch(t, 0);
-	fprintf(stderr, "------------------END_TREE------------------\n\n");
+	if(_yacout){
+		fprintf(stderr, "------------------BEGIN_TREE------------------\n");
+		print_spaced_branch(t, 0);
+		fprintf(stderr, "------------------END_TREE------------------\n\n");
+	}
 }
 
 void print_spaced_branch( tree_t *t, int spaces )

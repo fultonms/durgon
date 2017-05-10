@@ -3,8 +3,7 @@
 #include <stdio.h>
 #include "scope.h"
 
-#define RED "\x1B[31m"
-#define error(fmt, ...) printf("\x1B[31m%s:%d: " fmt "\x1B[0m\n", __FILE__, __LINE__, __VA_ARGS__)
+#define ERROR(fmt, ...) printf("\x1B[31m%s:%d: " fmt "\x1B[0m\n", __FILE__, __LINE__, __VA_ARGS__)
 
 scope_t* top;
 
@@ -47,7 +46,7 @@ node_t* scope_insert(scope_t* scope, char* name){
         return NULL;
 
     if( scope_search(scope, name)){
-        error("Name %s already defined in scope.", name);
+        ERROR("Name %s already defined in scope.", name);
         assert(0);
     }
 

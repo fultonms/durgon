@@ -13,9 +13,11 @@ extern scope_t* top;
 extern int line;
 
 int offsetMode = 0;
+int _lexout = 1;
+int _yacout = 1;
 
 FILE* outfile;
-
+#define ERROR(fmt, ...) printf("\x1B[31m" fmt "\x1B[0m\n",  __VA_ARGS__)
 %}
 
 %union {
@@ -212,6 +214,7 @@ factor: ID                          { $$ = make_id(scope_searchall(top,$1));}
 
 int main(int argc, char** argv)
 {
+
     outfile = fopen("paarthurnax.s", "w");
     yyparse();
     fclose(outfile);
@@ -220,6 +223,6 @@ int main(int argc, char** argv)
 }
 
 int yyerror(char * s){
-   fprintf(stderr, "Error at line %d: %s\n", line, s);
+   ERROR("Error at line %d: %s", line, s);
    return 1;
 }
