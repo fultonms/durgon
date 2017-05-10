@@ -85,7 +85,7 @@ node_t* scope_searchall(scope_t* scope, char* name){
    }
 
    depth = 0;
-   fprintf(stderr, "Could not find %s\n", name);
+   ERROR("Could not find %s", name);
    assert(0);
    return NULL;
 }
