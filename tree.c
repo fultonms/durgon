@@ -22,7 +22,6 @@ tree_t* make_inum(int i){
 	tree_t * ptr = make_tree(INUM, NULL, NULL);
 	ptr->attribute.ival = i;
 	return ptr;
-
 }
 
 tree_t* make_rnum(float r){

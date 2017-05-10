@@ -35,7 +35,7 @@ int check_mulop(tree_t* t){
 }
 
 int check_asnop(tree_t* t){
-
+    return 0;
 }
 
 //Runs all semmantic checks that can be done by just looking at the tree.
@@ -44,7 +44,7 @@ int check_tree(tree_t* t){
     if( t == NULL)
         return -1;
 
-    int ret;
+    int ret = 0;
 
     switch(t->type){
         case ADDOP: ret = check_addop(t); break;

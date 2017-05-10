@@ -3,9 +3,10 @@
 #include <stdio.h>
 #include "scope.h"
 
-#define ERROR(fmt, ...) printf("\x1B[31m%s:%d: " fmt "\x1B[0m\n", __FILE__, __LINE__, __VA_ARGS__)
-
 scope_t* top;
+extern int line;
+
+#define ERROR(fmt, ...) printf("\x1B[31mLine %d: " fmt "\x1B[0m\n", line, __VA_ARGS__)
 
 extern int offsetMode;
 int depth = 0;

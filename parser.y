@@ -106,13 +106,19 @@ subprogram_declaration:
     subprogram_head 
     declarations 
     subprogram_declarations
-    compound_statement 
+    compound_statement { top = scope_pop(top);}
     ;
 
 subprogram_head: 
-    FUNCTION ID
+    FUNCTION ID {
+                    scope_insert(top, $2);
+                    top = scope_push(top, FUNCTION);
+                }
     arguments ':' standard_type ';'
-    | PROCEDURE ID
+    | PROCEDURE ID {
+                    scope_insert(top, $2);
+                    top = scope_push(top, PROCEDURE);
+                    }
     arguments ';';
 
 arguments:                 
@@ -135,7 +141,7 @@ statement: variable ASSIGNOP expression
                 tree_t* t;
                 t = make_tree(ASSIGNOP, make_id(scope_searchall(top, $1)), $3);
                 print_tree(t); 
-                assert(check_tree(t));
+                //assert(check_tree(t));
                 //gencode(t);
                 $$ = t;
                 //tree_recycle(t);
@@ -162,14 +168,13 @@ statement: variable ASSIGNOP expression
        t = make_tree(FOR, make_tree(ASSIGNOP, make_id(scope_searchall(top, $2)), $4), make_tree(TO, $6, make_tree(DO, $8, NULL)));
        print_tree(t);
    }
-   ;
-   
+   ;   
 
 variable: ID { $$ = $1; }
    //| ID '[' expression ']'
    ;
 
-procedure_statement: ID
+procedure_statement: ID 
    | ID '(' expression_list ')' 
         {
             if(strcmp("read", $1) == 0){
@@ -178,7 +183,7 @@ procedure_statement: ID
                 gen_write($3);
             }else{
                 tree_t* t = make_tree(PROCEDURE_CALL, make_id(scope_searchall(top, $1)), $3);
-                assert(check_tree(t));
+                //assert(check_tree(t));
                 //gencode(t);
                 tree_recycle(t);
             }
