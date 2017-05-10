@@ -88,6 +88,7 @@ identifier_list: ID         {$$ = make_tree(COMMA, NULL, make_id(scope_insert(to
    ; 
 
 declarations: declarations VAR identifier_list ':' type ';'
+                 {type_tree($3, $5); $$ = $3;}
    | /* empty */ {$$ = NULL;} 
    ;
 
@@ -125,7 +126,7 @@ arguments:
     '(' parameter_list ')'  
     | ;
 
-parameter_list: identifier_list ':' type
+parameter_list: identifier_list ':' type {type_tree($1,$3);}
    | parameter_list ';' identifier_list ':' type;
 
 compound_statement: BBEGIN optional_statements END ;
@@ -141,7 +142,7 @@ statement: variable ASSIGNOP expression
                 tree_t* t;
                 t = make_tree(ASSIGNOP, make_id(scope_searchall(top, $1)), $3);
                 print_tree(t); 
-                //assert(check_tree(t));
+                assert(!check_tree(t));
                 //gencode(t);
                 $$ = t;
                 //tree_recycle(t);
@@ -183,7 +184,7 @@ procedure_statement: ID
                 gen_write($3);
             }else{
                 tree_t* t = make_tree(PROCEDURE_CALL, make_id(scope_searchall(top, $1)), $3);
-                //assert(check_tree(t));
+                assert(!check_tree(t));
                 //gencode(t);
                 tree_recycle(t);
             }
@@ -200,11 +201,19 @@ expression: simple_expression       { $$ = $1;}
 
 simple_expression: term             { $$ = $1; }
    //| ADDOP term                     
-   | simple_expression ADDOP term   { $$ = make_op(ADDOP, $2, $1, $3); }
+   | simple_expression ADDOP term   { 
+                                        tree_t* t = make_op(ADDOP, $2, $1, $3); 
+                                        assert(!check_tree(t)); 
+                                        $$ = t;
+                                    }
    ;
 
 term : factor                       { $$ = $1; }     
-   | term MULOP factor              { $$ = make_op(MULOP, $2, $1, $3); }
+   | term MULOP factor              { 
+                                        tree_t* t = make_op(MULOP, $2, $1, $3); 
+                                        assert(!check_tree(t)); 
+                                        $$ = t;
+                                    }
    ;
 
 factor: ID                          { $$ = make_id(scope_searchall(top,$1));} 

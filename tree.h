@@ -24,6 +24,7 @@ tree_t* make_id(node_t* n);
 tree_t* make_op(int type, int attr, tree_t* left, tree_t* right);
 
 int label_tree(tree_t* t);
+tree_t* type_tree(tree_t* t, int type);
 
 void print_tree( tree_t *t);
 void print_spaced_branch(tree_t* t, int spaces);

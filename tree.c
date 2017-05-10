@@ -42,6 +42,19 @@ tree_t* make_op(int type, int attr, tree_t* left, tree_t* right){
 	return ptr;
 }
 
+tree_t* type_tree(tree_t* t, int type){
+	if(t == NULL)
+		return NULL;
+	if(t->type == ID){
+		t->attribute.sval->type = type;
+		return 0;
+	}
+
+	type_tree(t->left, type);
+	type_tree(t->right, type);
+	return 0;
+}
+
 void print_tree(tree_t* t){
 	if(_yacout){
 		fprintf(stderr, "------------------BEGIN_TREE------------------\n");
