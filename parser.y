@@ -186,7 +186,11 @@ statement: variable ASSIGNOP expression
    ;   
 
 variable: ID { $$ = $1; }
-   | ID '[' expression ']'
+   | ID '[' expression ']' {
+                            tree_t* t = make_tree(ARRAY_ACCESS, make_id(scope_search(top, $1)), $3);
+                            assert(!check_tree(t));
+                            $$ = t;
+                            }
    ;
 
 procedure_statement: ID 
@@ -235,7 +239,11 @@ factor: ID                          { $$ = make_id(scope_searchall(top,$1));}
                                         assert(!check_tree(t)); 
                                         $$ = t;
                                     }  
-   | ID '[' expression ']'          { $$ = make_tree(ARRAY_ACCESS, make_id(scope_search(top, $1)), $3); }
+   | ID '[' expression ']'          { 
+                                        tree_t* t = make_tree(ARRAY_ACCESS, make_id(scope_search(top, $1)), $3);
+                                        assert(!check_tree(t));
+                                        $$ = t;    
+                                    }
    | INUM                           { $$ = make_inum($1); }         
    | RNUM                           { $$ = make_rnum($1); }
    | '(' expression ')'             { $$ = $2; }

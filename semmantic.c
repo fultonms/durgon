@@ -74,9 +74,25 @@ static int count_proc_calls(tree_t* t){
 
 
 static int check_asnop(tree_t* t){
+    if(get_type(t->left) == ID && t->left->attribute.sval->func != NULL && t->left->attribute.sval->func->ret){
+        if(t->left->attribute.sval->func->ret != get_type(t->right)){
+            ERROR("Function %s trying to return %s, return type is %s", t->left->attribute.sval->name, get_type_name(t->left->attribute.sval->func->ret), get_type_name(get_type(t->right)));
+            return 1;
+        }
+    }
 
     if (count_proc_calls(t) > 0){
         ERROR("Attempting to assign a procedure call to %s.", t->left->attribute.sval->name);
+        return 1;
+    }
+
+
+    return 0;
+}
+
+static int check_aaccess(tree_t* t){
+    if(get_type(t->right) != INUM){
+        ERROR("Attempting to access array %s with a non integer-typed expresion.", t->left->attribute.sval->name);
         return 1;
     }
 
@@ -109,6 +125,8 @@ static int count_args(tree_t* t){
 static int check_function(tree_t* t){
     int argc = count_args(t->right);
     func_t* func = t->left->attribute.sval->func;
+
+    print_tree(t);
 
     if(t->left->attribute.sval->type == PROCEDURE){
         ERROR("Attempting to use procedure %s as a function.", t->left->attribute.sval->name);
@@ -174,6 +192,7 @@ int check_tree(tree_t* t){
         case ADDOP: ret = check_addop(t); break;
         case MULOP: ret = check_mulop(t); break;
         case ASSIGNOP: ret = check_asnop(t); break;
+        case ARRAY_ACCESS: ret = check_aaccess(t); break;
         case FUNCTION_CALL: ret = check_function(t); break;
         case PROCEDURE_CALL: ret = check_procedure(t); break;
         case IF: ret = check_ifwhile(t); break;
