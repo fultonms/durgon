@@ -137,7 +137,8 @@ arguments:
     | ;
 
 parameter_list: identifier_list ':' type {type_tree($1,$3);}
-   | parameter_list ';' identifier_list ':' type;
+   | parameter_list ';' identifier_list ':' type {type_tree($3,$5);}
+   ;
 
 compound_statement: BBEGIN optional_statements END ;
 
@@ -185,7 +186,7 @@ statement: variable ASSIGNOP expression
    ;   
 
 variable: ID { $$ = $1; }
-   //| ID '[' expression ']'
+   | ID '[' expression ']'
    ;
 
 procedure_statement: ID 

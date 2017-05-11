@@ -84,6 +84,21 @@ static int check_asnop(tree_t* t){
     return 0;
 }
 
+static int match_args(tree_t* arglist, node_t* n){
+    tree_t* t;
+    typen_t* ptype = n->func->types;
+    int ret = 0;
+
+    for(t = arglist; t != NULL; t = t->left){
+        if(get_type(t->right) != ptype->type){
+            ERROR("Error in function %s: Type mistmatch on argument between %s and %s", n->name, get_type_name(get_type(t->right)), get_type_name(ptype->type));
+            ret++;
+        }
+        ptype = ptype->next;
+    }
+    return ret;
+}
+
 static int count_args(tree_t* t){
     if(t == NULL)
         return 0;
@@ -96,7 +111,7 @@ static int check_function(tree_t* t){
     func_t* func = t->left->attribute.sval->func;
 
     if(t->left->attribute.sval->type == PROCEDURE){
-        ERROR("Attempting to use procedure %s to assign a value.", t->left->attribute.sval->name);
+        ERROR("Attempting to use procedure %s as a function.", t->left->attribute.sval->name);
         return 1;
     }
 
@@ -104,20 +119,8 @@ static int check_function(tree_t* t){
         ERROR("Number of arguments is wrong in function %s.", t->left->attribute.sval->name);
         return 1;
     }
-    tree_t* param;
-    typen_t* type = func->types;
 
-    print_tree(param);
-    
-    for(param = t->right; param != NULL; param->left){
-        fprintf(stderr, "%d, %d\n", type->type, param->right->attribute.sval->type);
-        if(get_type(param->right) != type->type){
-            ERROR("In function %s, parameter %s is the wrong type. Expected %s, got %s.", t->left->attribute.sval->name, param->right->attribute.sval->name, get_type_name(type->type), get_type_name(get_type(param->right)));
-            return 1;
-        }
-        type = type->next;
-    }
-    return 0;
+    return match_args(t->right, t->left->attribute.sval);
 }
 
 static int check_procedure(tree_t* t){
@@ -134,7 +137,7 @@ static int check_procedure(tree_t* t){
         return 1;
     }
 
-    return 0;
+    return match_args(t->right, t->left->attribute.sval);
 }
 
 static int check_ifwhile(tree_t* t){
