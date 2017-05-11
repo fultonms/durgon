@@ -13,7 +13,7 @@ extern scope_t* top;
 extern int line;
 
 int offsetMode = 0;
-int _lexout = 0;
+int _lexout = 1;
 int _yacout = 1;
 
 FILE* outfile;

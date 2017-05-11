@@ -5,6 +5,7 @@
 #include "y.tab.h"
 
 extern int line;
+extern scope_t* top;
 
 #define ERROR(fmt, ...) printf("\x1B[31mLine %d: " fmt "\x1B[0m\n", line, __VA_ARGS__)
 
@@ -77,6 +78,13 @@ static int check_asnop(tree_t* t){
     if(get_type(t->left) == ID && t->left->attribute.sval->func != NULL && t->left->attribute.sval->func->ret){
         if(t->left->attribute.sval->func->ret != get_type(t->right)){
             ERROR("Function %s trying to return %s, return type is %s", t->left->attribute.sval->name, get_type_name(t->left->attribute.sval->func->ret), get_type_name(get_type(t->right)));
+            return 1;
+        }
+    }
+
+    if(top->type == FUNCTION && t->left->attribute.sval->func == NULL){
+        if (scope_search(top, t->left->attribute.sval->name) == NULL){
+            ERROR("Assignment to non-local name %s attempted in function.", t->left->attribute.sval->name);
             return 1;
         }
     }
