@@ -16,7 +16,12 @@ static int get_type(tree_t* t){
         return RNUM;
     }else if(t->type == ID){
         return t->attribute.sval->type;
+    }else if(t->type == PROCEDURE){
+        return PROCEDURE;
+    }else if(t->type == FUNCTION){
+        return FUNCTION;
     }
+
     return 0;
 }
 
@@ -54,7 +59,28 @@ static int check_mulop(tree_t* t){
     return 0;
 }
 
+static int count_proc_calls(tree_t* t){
+    int l, r;
+    if(t == NULL)
+        return 0;
+    
+    if(t->type == PROCEDURE_CALL)
+        return 1;
+
+    l = count_proc_calls(t->left);
+    r = count_proc_calls(t->right);
+    return l + r;
+}
+
+
 static int check_asnop(tree_t* t){
+
+    if (count_proc_calls(t) > 0){
+        ERROR("Attempting to assign a procedure call to %s.", t->left->attribute.sval->name);
+        return 1;
+    }
+
+
     return 0;
 }
 
@@ -68,6 +94,11 @@ static int count_args(tree_t* t){
 static int check_function(tree_t* t){
     int argc = count_args(t->right);
     func_t* func = t->left->attribute.sval->func;
+
+    if(t->left->attribute.sval->type == PROCEDURE){
+        ERROR("Attempting to use procedure %s to assign a value.", t->left->attribute.sval->name);
+        return 1;
+    }
 
     if(func->argc != argc){
         ERROR("Number of arguments is wrong in function %s.", t->left->attribute.sval->name);

@@ -113,6 +113,7 @@ subprogram_declaration:
 subprogram_head: 
     FUNCTION ID {
                     scope_insert(top, $2);
+                    scope_search(top, $2)->type = FUNCTION;
                     top = scope_push(top, FUNCTION);
                 }
     arguments ':' standard_type ';'
@@ -122,6 +123,7 @@ subprogram_head:
                 }
     | PROCEDURE ID {
                     scope_insert(top, $2);
+                    scope_search(top, $2)->type = PROCEDURE;
                     top = scope_push(top, PROCEDURE);
                     }
     arguments ';'{
