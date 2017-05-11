@@ -13,7 +13,7 @@ extern scope_t* top;
 extern int line;
 
 int offsetMode = 0;
-int _lexout = 1;
+int _lexout = 0;
 int _yacout = 1;
 
 FILE* outfile;
@@ -93,11 +93,11 @@ declarations: declarations VAR identifier_list ':' type ';'
    ;
 
 type: standard_type { $$ = $1;}
-   //| ARRAY '[' INUM DOTDOT INUM ']' OF standard_type 
+   | ARRAY '[' INUM DOTDOT INUM ']' OF standard_type 
    ;
 
-standard_type: INTEGER {$$ = INUM;} 
-    | REAL {$$ = INUM; }
+standard_type: INTEGER {$$ = INUM; } 
+    | REAL {$$ = RNUM; }
     ;
 
 subprogram_declarations: subprogram_declarations subprogram_declaration ';'
@@ -116,11 +116,19 @@ subprogram_head:
                     top = scope_push(top, FUNCTION);
                 }
     arguments ':' standard_type ';'
+                {
+                    node_t* n = scope_search(top->next, $2);
+                    argumentize(top, n, $6);
+                }
     | PROCEDURE ID {
                     scope_insert(top, $2);
                     top = scope_push(top, PROCEDURE);
                     }
-    arguments ';';
+    arguments ';'{
+                    node_t* n = scope_search(top->next, $2);
+                    argumentize(top, n, 0);
+                 }
+    ;
 
 arguments:                 
     '(' parameter_list ')'  
@@ -154,12 +162,14 @@ statement: variable ASSIGNOP expression
    {
        tree_t* t = NULL;
        t = make_tree(IF, $2, make_tree(THEN, $4, make_tree(ELSE, $6, NULL)));
+       assert(!check_tree(t));
        print_tree(t);
    }
    | WHILE expression DO statement
    {
        tree_t* t = NULL;
        t = make_tree(WHILE, $2, make_tree(DO, $4, NULL));
+       assert(!check_tree(t));
        print_tree(t);
    }
 
@@ -167,6 +177,7 @@ statement: variable ASSIGNOP expression
    {
        tree_t* t = NULL;
        t = make_tree(FOR, make_tree(ASSIGNOP, make_id(scope_searchall(top, $2)), $4), make_tree(TO, $6, make_tree(DO, $8, NULL)));
+       assert(!check_tree(t));
        print_tree(t);
    }
    ;   
@@ -185,7 +196,6 @@ procedure_statement: ID
             }else{
                 tree_t* t = make_tree(PROCEDURE_CALL, make_id(scope_searchall(top, $1)), $3);
                 assert(!check_tree(t));
-                //gencode(t);
                 tree_recycle(t);
             }
         }
@@ -217,7 +227,11 @@ term : factor                       { $$ = $1; }
    ;
 
 factor: ID                          { $$ = make_id(scope_searchall(top,$1));} 
-   | ID '(' expression_list ')'     { $$ = make_tree(FUNCTION_CALL, make_id(scope_search(top, $1)), $3); }  
+   | ID '(' expression_list ')'     { 
+                                        tree_t* t = make_tree(FUNCTION_CALL, make_id(scope_search(top, $1)), $3); 
+                                        assert(!check_tree(t)); 
+                                        $$ = t;
+                                    }  
    | ID '[' expression ']'          { $$ = make_tree(ARRAY_ACCESS, make_id(scope_search(top, $1)), $3); }
    | INUM                           { $$ = make_inum($1); }         
    | RNUM                           { $$ = make_rnum($1); }

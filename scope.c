@@ -90,6 +90,30 @@ node_t* scope_searchall(scope_t* scope, char* name){
    return NULL;
 }
 
+void argumentize(scope_t* scope, node_t* node, int rettype){
+	assert(top != NULL);
+	assert(node != NULL);
+
+	node->func = calloc(1,sizeof(func_t));
+	node->func->ret = rettype;
+
+    node_t * n;
+	typen_t * t;
+
+	for (int i = 0; i < HASH_SIZE; i++) {
+		for (n = top->table[i]; n != NULL; n = n->next) {
+			if (n == node) 
+				continue;
+
+			(node->func->argc)++;
+			t = calloc(1, sizeof(typen_t));
+			t->type = n->type;
+            t->next = node->func->types;
+			node->func->types = t;
+		}
+	}   
+}
+
 //Creates a new scope.
 scope_t* make_scope(){
     scope_t* s = calloc(1, sizeof(scope_t));

@@ -12,7 +12,3 @@ program main( input, output );
 begin
   b := foo(y,b) + foo(b,y,10)
 end.
-
-
-
-

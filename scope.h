@@ -16,8 +16,8 @@ typedef struct scope_s {
 //Basic search and insert
 node_t* scope_search(scope_t* scope, char* name);
 node_t* scope_insert(scope_t* scope, char* name);
-
 node_t* scope_searchall(scope_t* head, char* name);
+void argumentize(scope_t* scope, node_t* node, int rettype);
 
 scope_t* make_scope();
 

@@ -83,6 +83,7 @@ void print_spaced_branch( tree_t *t, int spaces )
 		break;
    case RNUM:
       fprintf( stderr, "[RNUM:%f]", t->attribute.rval );
+	  break;
 	case ADDOP:
 		fprintf( stderr, "[ADDOP:%c]", t->attribute.opval );
 		break;
@@ -115,6 +116,15 @@ void print_spaced_branch( tree_t *t, int spaces )
 		break;
 	case TO:
 		fprintf( stderr, "[TO]");
+		break;
+	case COMMA:
+		fprintf(stderr, "[COMMA]");
+		break;
+	case PROCEDURE_CALL:
+		fprintf(stderr, "[PROCEDURE]");
+		break;
+	case FUNCTION_CALL:
+		fprintf(stderr, "[FUNCTION]");
 		break;
 	default:
 		fprintf( stderr, "[UKNOWN:%d]", t->type );
